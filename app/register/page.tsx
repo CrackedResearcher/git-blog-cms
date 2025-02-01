@@ -15,8 +15,6 @@ export default function Register() {
     ? 'https://git-blogger.vercel.app' 
     : 'http://localhost:3000';
 
-
-
     try {
       const client_id = process.env.NEXT_PUBLIC_GIT_CLIENT_ID;
       const redirectUri = encodeURIComponent(`${baseUrl}/auth/callback`);
