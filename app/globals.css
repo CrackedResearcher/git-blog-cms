@@ -1,3 +1,6 @@
+@import url('@radix-ui/colors/tomato-dark.css');
+@import url('@radix-ui/colors/mauve-dark.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,9 +25,13 @@ body {
 }
 
 .dark-editor {
+  margin-left: 0px;
+  --editor-toolbar-bg: transparent !important;
+  --toolbar-button-bg: transparent;
+
   --accentBase: var(--tomato-1);
   --accentBgSubtle: var(--tomato-2);
-  --accentBg: var(--tomato-3);
+  --accentBg: var(--tomato-10);
   --accentBgHover: var(--tomato-4);
   --accentBgActive: var(--tomato-5);
   --accentLine: var(--tomato-6);
@@ -69,4 +76,25 @@ body {
   color: var(--baseText);
   --basePageBg: black;
   background: var(--basePageBg);
+
+  .mdxeditor-toolbar {
+    background: transparent !important;
+    border: 1px solid var(--baseBorder);
+    backdrop-filter: blur(8px);
+  }
+
+  .mdxeditor-toolbar-container {
+    background: transparent !important;
+  }
+
+  .mdxeditor {
+    background: transparent !important;
+    border: 1px solid var(--baseBorder);
+    padding: 0 !important;
+  }
+
+  .mdxeditor-content-editable {
+    line-height: 1.75 !important;
+    min-height: 500px !important;
+  }
 }
