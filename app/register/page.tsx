@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import getAccessToken from '@/hooks/checkAuth';
+import { useRouter } from 'next/navigation';
 
 export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleGithubAuth = async () => {
     setIsLoading(true);
-    // GitHub OAuth logic will be implemented here
+
     try {
-      // Will implement OAuth flow later
+      const client_id = process.env.NEXT_PUBLIC_GIT_CLIENT_ID;
+      const redirectUri = encodeURIComponent('http://localhost:3000/auth/callback');
+      const scope = encodeURIComponent('repo read:user');
+      const state = 'INIT_GIT_AUTH';
+
+      // Redirect to GitHub OAuth page
+      window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
       console.log('Initiating GitHub OAuth flow');
     } catch (error) {
       console.error('Authentication error:', error);
@@ -17,6 +26,17 @@ export default function Register() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    async function checkAccess() {
+      const hasGithubAccess = await getAccessToken();
+      if (!hasGithubAccess.success) {
+        router.push('/register');
+      }
+    }
+    
+    checkAccess();
+  }, [router]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-black">
