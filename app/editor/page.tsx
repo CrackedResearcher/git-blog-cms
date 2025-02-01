@@ -65,4 +65,13 @@ const Editor = () => {
   );
 };
 
-export default Editor;
+
+export default function MyEditor(){
+  return (
+    <>
+    <Suspense>
+      <Editor/>
+    </Suspense>
+    </>
+  )
+}
