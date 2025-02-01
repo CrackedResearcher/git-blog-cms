@@ -42,7 +42,7 @@ const NewBlogPage = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white font-sans">Create New Blog</h2>
           <p className="text-sm mt-2 text-white/80">
-            Ready to share your thoughts with the world?
+            Whats on your mind.. what do you want to write about today?
           </p>
         </div>
 
@@ -58,7 +58,7 @@ const NewBlogPage = () => {
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-black/30 border border-white/10 rounded-md text-gray-300 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-sans"
+                className="test-xs mt-1 block w-full px-3 py-2 bg-black/30 border border-white/10 rounded-md text-gray-300 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-sans"
                 placeholder="Enter your blog title"
               />
             </div>
@@ -72,7 +72,7 @@ const NewBlogPage = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="mt-1 block w-full px-3 py-2 bg-black/30 border border-white/10 rounded-md text-gray-300 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-sans"
+                className="test-xs mt-1 block w-full px-3 py-2 bg-black/30 border border-white/10 rounded-md text-gray-300 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-sans"
                 placeholder="Write a brief description of your blog"
               />
             </div>
@@ -98,7 +98,7 @@ const NewBlogPage = () => {
         </form>
 
         <p className="text-xs mt-4 text-white/70 text-center">
-          Your blog will be created as a new file at blog/{title} and will be accessible on your blog
+          Your blog will be created as a new file at <code className="px-1 rounded bg-black/40  text-gray-300">blog/{title}.mdx</code> and will be accessible on your blog.
         </p>
       </div>
     </div>

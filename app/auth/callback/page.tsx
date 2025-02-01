@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function CallbackPage() {
+function CallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState('Authenticating...');
@@ -24,14 +25,12 @@ export default function CallbackPage() {
 
         if (data.success) {
           setStatus('Authentication successful! Redirecting...');
-
           setTimeout(() => router.push('/new'), 1500);
         } else {
           setStatus('Authentication failed: ' + (data.error || 'Unknown error'));
         }
       } catch (error) {
         setStatus('Authentication failed: Server error');
-        console.error('Callback error:', error);
       }
     }
 
@@ -47,4 +46,15 @@ export default function CallbackPage() {
       </div>
     </div>
   );
+}
+
+export default function CallbackPg(){
+    return (
+        <>
+        <Suspense>
+        <CallbackPage/>
+        </Suspense>
+        </>
+
+    )
 }

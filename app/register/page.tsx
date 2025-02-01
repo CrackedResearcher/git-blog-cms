@@ -11,15 +11,20 @@ export default function Register() {
   const handleGithubAuth = async () => {
     setIsLoading(true);
 
+    const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://git-blogger.vercel.app' 
+    : 'http://localhost:3000';
+
+
+
     try {
       const client_id = process.env.NEXT_PUBLIC_GIT_CLIENT_ID;
-      const redirectUri = encodeURIComponent('http://localhost:3000/auth/callback');
+      const redirectUri = encodeURIComponent(`${baseUrl}/auth/callback`);
       const scope = encodeURIComponent('repo read:user');
       const state = 'INIT_GIT_AUTH';
 
-      // Redirect to GitHub OAuth page
       window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
-      console.log('Initiating GitHub OAuth flow');
+
     } catch (error) {
       console.error('Authentication error:', error);
     } finally {
@@ -32,6 +37,8 @@ export default function Register() {
       const hasGithubAccess = await getAccessToken();
       if (!hasGithubAccess.success) {
         router.push('/register');
+      } else {
+        router.push("/new");
       }
     }
     
@@ -70,7 +77,7 @@ export default function Register() {
         </button>
 
         <p className="text-sm mt-4 text-white/70 text-center">
-          We'll only request access to your public repositories
+          We'll need these access to make sure the app works without interruptions.
         </p>
       </div>
     </div>
