@@ -5,7 +5,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "@mdxeditor/editor/style.css";
 
-const EditorComponent = dynamic(() => import("../components/EditorComponent"), {
+const EditorComponent = dynamic(() => import("../../components/EditorComponent"), {
   ssr: false,
 });
 

@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 font-sans">
       <main className="max-w-xl text-center">
-        <h1 className="text-3xl font-bold mb-4">Git-Blogger</h1>
+        <h1 className="text-3xl font-bold mb-4 ">Git-Blogger</h1>
         <p className=" text-gray-600 dark:text-gray-300 mb-8">
           A GitHub-connected blog CMS with automated MDX generation<br/> and Git-based deployment
         </p>

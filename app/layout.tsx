@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Git-Blogger",
-  description: "type, edit, publish. blog like a pro.",
+  description: "type, edit, publish. devs blog like a pro.",
 };
 
 export default function RootLayout({

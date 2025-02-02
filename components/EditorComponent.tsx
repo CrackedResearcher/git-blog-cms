@@ -25,8 +25,10 @@ import {
   directivesPlugin,
   codeMirrorPlugin,
   diffSourcePlugin,
+  BlockTypeSelect,
 } from "@mdxeditor/editor";
 import { FC } from "react";
+import '@mdxeditor/editor/style.css'
 
 interface EditorProps {
   markdown: string;
@@ -42,13 +44,14 @@ const Editor: FC<EditorProps> = ({ markdown, onChange, editorRef }) => {
       onChange={onChange}
       placeholder="Write something here..."
       className="dark-theme dark-editor !bg-transparent"
-      contentEditableClassName="dark-editor dark-theme !bg-transparent !p-2 !pt-4 !text-gray-300 leading-relaxed"
+      contentEditableClassName="dark-editor dark-theme !bg-transparent  !text-gray-300"
       plugins={[
         toolbarPlugin({
           toolbarContents: () => (
             <>
               <UndoRedo />
               <BoldItalicUnderlineToggles />
+              <BlockTypeSelect />
               <ListsToggle />
               <CodeToggle />
               <InsertTable />
@@ -56,6 +59,7 @@ const Editor: FC<EditorProps> = ({ markdown, onChange, editorRef }) => {
             </>
           ),
         }),
+    
         listsPlugin(),
         quotePlugin(),
         headingsPlugin(),
