@@ -1,4 +1,5 @@
 "use client";
+import { RefObject } from "react";
 
 import {
   MDXEditor,
@@ -6,7 +7,6 @@ import {
   headingsPlugin,
   listsPlugin,
   quotePlugin,
-  thematicBreakPlugin,
   toolbarPlugin,
   UndoRedo,
   BoldItalicUnderlineToggles,
@@ -18,22 +18,17 @@ import {
   tablePlugin,
   imagePlugin,
   InsertImage,
-  frontmatterPlugin,
-  codeBlockPlugin,
-  sandpackPlugin,
   markdownShortcutPlugin,
-  directivesPlugin,
-  codeMirrorPlugin,
-  diffSourcePlugin,
   BlockTypeSelect,
+  frontmatterPlugin,
 } from "@mdxeditor/editor";
 import { FC } from "react";
-import '@mdxeditor/editor/style.css'
+import "@mdxeditor/editor/style.css";
 
 interface EditorProps {
   markdown: string;
   onChange: (markdown: string) => void;
-  editorRef?: React.MutableRefObject<MDXEditorMethods | null>;
+  editorRef?: RefObject<MDXEditorMethods | null>;
 }
 
 const Editor: FC<EditorProps> = ({ markdown, onChange, editorRef }) => {
@@ -59,34 +54,19 @@ const Editor: FC<EditorProps> = ({ markdown, onChange, editorRef }) => {
             </>
           ),
         }),
-    
         listsPlugin(),
         quotePlugin(),
+        tablePlugin(),
+        frontmatterPlugin(),
         headingsPlugin(),
+        markdownShortcutPlugin(),
         linkPlugin(),
         linkDialogPlugin(),
         imagePlugin({
-          imageUploadHandler: async () => {
+          imageUploadHandler: () => {
             return Promise.resolve("");
           },
-          disableImageResize: true,
         }),
-        tablePlugin(),
-        thematicBreakPlugin(),
-        frontmatterPlugin(),
-        codeBlockPlugin({ defaultCodeBlockLanguage: "txt" }),
-        sandpackPlugin(),
-        codeMirrorPlugin({
-          codeBlockLanguages: {
-            js: "JavaScript",
-            css: "CSS",
-            txt: "text",
-            tsx: "TypeScript",
-          },
-        }),
-        directivesPlugin(),
-        diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "boo" }),
-        markdownShortcutPlugin(),
       ]}
     />
   );
