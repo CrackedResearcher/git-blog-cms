@@ -5,6 +5,18 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const EditorComponent = dynamic(
   () => import("../../components/EditorComponent"),
@@ -19,6 +31,14 @@ const Editor = () => {
   const [content, setContent] = useState("");
   const title = searchParams.get("title") || "";
   const description = searchParams.get("description") || "";
+
+  const handleSaveDraft = async () => {
+    console.log("Draft content:", content);
+  };
+
+  const handlePublishToGithub = async () => {
+    console.log("content that will be published:", content);
+  };
 
   const debouncedSetContent = useCallback(
     debounce((value: string) => {
@@ -63,12 +83,55 @@ const Editor = () => {
         </div>
 
         <div className="fixed bottom-6 right-6 flex gap-3 font-sans">
-          <button className="px-4 py-1.5 border border-white/20 text-white rounded-md bg-white/10 backdrop-blur-sm hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 transition-colors">
-            Save Draft
-          </button>
-          <button className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors">
-            Publish Now
-          </button>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <button
+              onClick={handleSaveDraft}
+              className="px-4 py-1.5 border border-white/20 text-white rounded-md bg-white/10 backdrop-blur-sm hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 transition-colors"
+            >
+              Save Draft
+            </button>
+          </motion.div>
+
+          <Dialog>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <DialogTrigger asChild>
+                <Button className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors">
+                  Publish Now
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[465px]">
+                <DialogHeader>
+                  <DialogTitle>Wanna publish this?</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to publish this article? This action
+                    will make your content publicly available on your blog.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button
+                      type="submit"
+                      className="mt-3"
+                      onClick={handlePublishToGithub}
+                    >
+                      yes, publish now!
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </motion.div>
+          </Dialog>
         </div>
       </main>
     </>
