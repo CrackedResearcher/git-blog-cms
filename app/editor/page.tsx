@@ -5,7 +5,6 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
-import PublishConfirmation from "./publishComfirmation";
 import { Button } from "@/components/ui/button";
 import { createBlogPost } from "./actions";
 import toast from "react-hot-toast";
@@ -23,7 +22,7 @@ const Editor = () => {
   const [content, setContent] = useState("");
   const title = searchParams.get("title") || "";
   const description = searchParams.get("description") || "";
-  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const handleSaveDraft = async () => {
     try {
@@ -39,15 +38,10 @@ const Editor = () => {
   };
 
   const handlePublishToGithub = async () => {
+    setIsPublishing(true);
     try {
-      const result = await toast.promise(
-        createBlogPost(title, content, description),
-        {
-          loading: "Publishing your blog post...",
-          success: "Blog post published successfully!",
-          error: "Failed to publish blog post",
-        }
-      );
+      const result = await createBlogPost(title, content, description);
+      toast.success("Blog post published successfully!");
 
       if (result?.redirect) {
         router.push(result.redirect);
@@ -57,6 +51,9 @@ const Editor = () => {
       }
     } catch (error) {
       console.error("Failed to publish:", error);
+      toast.error("Failed to publish blog post");
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -122,19 +119,12 @@ const Editor = () => {
           </button>
 
           <Button
-            onClick={() => setIsPublishDialogOpen(true)}
+            onClick={handlePublishToGithub}
+            disabled={isPublishing}
             className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors"
           >
-            Publish Now
+            {isPublishing ? "Publishing..." : "Publish Now"}
           </Button>
-
-          {isPublishDialogOpen && (
-            <PublishConfirmation
-              open={isPublishDialogOpen}
-              onOpenChange={setIsPublishDialogOpen}
-              onConfirm={handlePublishToGithub}
-            />
-          )}
         </div>
       </main>
     </>
