@@ -61,13 +61,15 @@ const Editor = () => {
         }
       );
 
-      if (!result.success && result.redirect) {
-        router.push(result.redirect);
-      } else if (result.success) {
-        localStorage.removeItem("blog-draft-save");
-        setContent("");
-        router.push("/new");
-      }
+      setTimeout(() => {
+        if (!result.success && result.redirect) {
+          router.push(result.redirect);
+        } else if (result.success) {
+          localStorage.removeItem("blog-draft-save");
+          setContent("");
+          router.push("/new");
+        }
+      }, 200);
     } catch (error) {
       console.error("Failed to publish:", error);
     }
@@ -143,40 +145,40 @@ const Editor = () => {
           </motion.div>
 
           <Dialog>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-            >
-              <DialogTrigger asChild>
-                <Button className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors">
-                  Publish Now
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[465px]">
-                <DialogHeader>
-                  <DialogTitle>Wanna publish this?</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to publish this article? This action
-                    will make your content publicly available on your blog.
-                  </DialogDescription>
-                </DialogHeader>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          <DialogTrigger asChild>
+            <Button className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors">
+              Publish Now
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[465px]">
+            <DialogHeader>
+              <DialogTitle>Wanna publish this?</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to publish this article? This action
+                will make your content publicly available on your blog.
+              </DialogDescription>
+            </DialogHeader>
 
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button
-                      type="submit"
-                      className="mt-3"
-                      onClick={handlePublishToGithub}
-                    >
-                      yes, publish now!
-                    </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </motion.div>
-          </Dialog>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button
+                  type="button" 
+                  className="mt-3"
+                  onClick={handlePublishToGithub}
+                >
+                  yes, publish now!
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </motion.div>
+      </Dialog>
         </div>
       </main>
     </>
