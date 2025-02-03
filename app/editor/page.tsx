@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { createBlogPost } from "./actions";
+import toast from "react-hot-toast";
 
 const EditorComponent = dynamic(
   () => import("../../components/EditorComponent"),
@@ -33,12 +35,38 @@ const Editor = () => {
   const description = searchParams.get("description") || "";
 
   const handleSaveDraft = async () => {
-    console.log("Draft content:", content);
+    try {
+      localStorage.setItem("blog-draft-save", content);
+      toast.promise(
+        Promise.resolve(), 
+        {
+          loading: 'Saving draft...',
+          success: 'Draft saved successfully',
+          error: 'Could not save draft. Retry..',
+        }
+      );
+    } catch (error) {
+      toast.error('Failed to save draft');
+    }
   };
 
   const handlePublishToGithub = async () => {
-    console.log("content that will be published:", content);
-    
+    try {
+      const result = await toast.promise(
+        createBlogPost(title, content, description),
+        {
+          loading: "Publishing your blog post...",
+          success: "Blog post published successfully!",
+          error: "Failed to publish blog post",
+        }
+      );
+
+      if (!result.success && result.redirect) {
+        router.push(result.redirect);
+      }
+    } catch (error) {
+      console.error("Failed to publish:", error);
+    }
   };
 
   const debouncedSetContent = useCallback(
@@ -148,5 +176,3 @@ export default function MyEditor() {
     </>
   );
 }
-
-
