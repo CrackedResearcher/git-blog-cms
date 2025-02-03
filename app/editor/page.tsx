@@ -63,6 +63,10 @@ const Editor = () => {
 
       if (!result.success && result.redirect) {
         router.push(result.redirect);
+      } else if (result.success) {
+        localStorage.removeItem("blog-draft-save");
+        setContent("");
+        router.push("/new");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
@@ -85,6 +89,18 @@ const Editor = () => {
     }
     checkAccess();
   }, [router]);
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem("blog-draft-save");
+    if (savedDraft) {
+      setContent(savedDraft);
+      setTimeout(() => {
+        toast.success('Draft loaded successfully', {
+          duration: 3000
+        });
+      }, 300);
+    }
+  }, []);
 
   return (
     <>
