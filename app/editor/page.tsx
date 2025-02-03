@@ -5,16 +5,7 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import PublishConfirmation from "./publishComfirmation";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { createBlogPost } from "./actions";
@@ -33,20 +24,18 @@ const Editor = () => {
   const [content, setContent] = useState("");
   const title = searchParams.get("title") || "";
   const description = searchParams.get("description") || "";
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
 
   const handleSaveDraft = async () => {
     try {
       localStorage.setItem("blog-draft-save", content);
-      toast.promise(
-        Promise.resolve(), 
-        {
-          loading: 'Saving draft...',
-          success: 'Draft saved successfully',
-          error: 'Could not save draft. Retry..',
-        }
-      );
+      toast.promise(Promise.resolve(), {
+        loading: "Saving draft...",
+        success: "Draft saved successfully",
+        error: "Could not save draft. Retry..",
+      });
     } catch (error) {
-      toast.error('Failed to save draft');
+      toast.error("Failed to save draft");
     }
   };
 
@@ -97,8 +86,8 @@ const Editor = () => {
     if (savedDraft) {
       setContent(savedDraft);
       setTimeout(() => {
-        toast.success('Draft loaded successfully', {
-          duration: 3000
+        toast.success("Draft loaded successfully", {
+          duration: 3000,
         });
       }, 300);
     }
@@ -144,41 +133,25 @@ const Editor = () => {
             </button>
           </motion.div>
 
-          <Dialog>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
-        >
-          <DialogTrigger asChild>
-            <Button className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            <Button
+              onClick={() => setIsPublishDialogOpen(true)}
+              className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors"
+            >
               Publish Now
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[465px]">
-            <DialogHeader>
-              <DialogTitle>Wanna publish this?</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to publish this article? This action
-                will make your content publicly available on your blog.
-              </DialogDescription>
-            </DialogHeader>
+          </motion.div>
 
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button
-                  type="button" 
-                  className="mt-3"
-                  onClick={handlePublishToGithub}
-                >
-                  yes, publish now!
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </motion.div>
-      </Dialog>
+          <PublishConfirmation
+            open={isPublishDialogOpen}
+            onOpenChange={setIsPublishDialogOpen}
+            onConfirm={handlePublishToGithub}
+          />
         </div>
       </main>
     </>
