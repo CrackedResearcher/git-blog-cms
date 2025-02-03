@@ -7,7 +7,6 @@ import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
 import PublishConfirmation from "./publishComfirmation";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { createBlogPost } from "./actions";
 import toast from "react-hot-toast";
 
@@ -50,15 +49,12 @@ const Editor = () => {
         }
       );
 
-      setTimeout(() => {
-        if (!result.success && result.redirect) {
-          router.push(result.redirect);
-        } else if (result.success) {
-          localStorage.removeItem("blog-draft-save");
-          setContent("");
-          router.push("/new");
-        }
-      }, 200);
+      if (result?.redirect) {
+        router.push(result.redirect);
+      } else {
+        localStorage.removeItem("blog-draft-save");
+        router.push("/new");
+      }
     } catch (error) {
       console.error("Failed to publish:", error);
     }
@@ -93,6 +89,10 @@ const Editor = () => {
     }
   }, []);
 
+  useEffect(() => {
+    return () => debouncedSetContent.cancel();
+  }, [debouncedSetContent]);
+
   return (
     <>
       <div className="pointer-events-none fixed left-0 top-0 z-10 h-12 w-full bg-gray-100 to-transparent backdrop-blur-xl [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)] dark:bg-zinc-950" />
@@ -110,48 +110,31 @@ const Editor = () => {
         <div className="border-b dark:border-gray-800 mb-8 font-sans text-gray-300" />
 
         <div className="prose prose-gray dark:prose-invert max-w-none p-0">
-          <Suspense fallback={null}>
-            <EditorComponent
-              markdown={content}
-              onChange={debouncedSetContent}
-            />
-          </Suspense>
+          <EditorComponent markdown={content} onChange={debouncedSetContent} />
         </div>
 
         <div className="fixed bottom-6 right-6 flex gap-3 font-sans">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+          <button
+            onClick={handleSaveDraft}
+            className="px-4 py-1.5 border border-white/20 text-white rounded-md bg-white/10 backdrop-blur-sm hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 transition-colors"
           >
-            <button
-              onClick={handleSaveDraft}
-              className="px-4 py-1.5 border border-white/20 text-white rounded-md bg-white/10 backdrop-blur-sm hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 transition-colors"
-            >
-              Save Draft
-            </button>
-          </motion.div>
+            Save Draft
+          </button>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+          <Button
+            onClick={() => setIsPublishDialogOpen(true)}
+            className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors"
           >
-            <Button
-              onClick={() => setIsPublishDialogOpen(true)}
-              className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors"
-            >
-              Publish Now
-            </Button>
-          </motion.div>
+            Publish Now
+          </Button>
 
-          <PublishConfirmation
-            open={isPublishDialogOpen}
-            onOpenChange={setIsPublishDialogOpen}
-            onConfirm={handlePublishToGithub}
-          />
+          {isPublishDialogOpen && (
+            <PublishConfirmation
+              open={isPublishDialogOpen}
+              onOpenChange={setIsPublishDialogOpen}
+              onConfirm={handlePublishToGithub}
+            />
+          )}
         </div>
       </main>
     </>
