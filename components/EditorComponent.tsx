@@ -39,7 +39,7 @@ const Editor: FC<EditorProps> = ({ markdown, onChange, editorRef }) => {
       onChange={onChange}
       placeholder="Write something here..."
       className="dark-theme dark-editor !bg-transparent"
-      contentEditableClassName="dark-editor dark-theme !bg-transparent  !text-gray-300"
+      contentEditableClassName="dark-editor dark-theme !bg-transparent !text-gray-300"
       plugins={[
         toolbarPlugin({
           toolbarContents: () => (

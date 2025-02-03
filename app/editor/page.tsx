@@ -38,6 +38,7 @@ const Editor = () => {
 
   const handlePublishToGithub = async () => {
     console.log("content that will be published:", content);
+    
   };
 
   const debouncedSetContent = useCallback(
@@ -147,3 +148,5 @@ export default function MyEditor() {
     </>
   );
 }
+
+

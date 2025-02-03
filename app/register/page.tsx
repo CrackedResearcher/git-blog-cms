@@ -1,15 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import getAccessToken from "@/hooks/checkAuth";
 import { useRouter } from "next/navigation";
+import { saveDetails } from "./actions";
 
 export default function Register() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [githubUsername, setGithubUsername] = useState("");
+  const [githubRepo, setGithubRepo] = useState("");
+  const [isDetailsSubmitted, setIsDetailsSubmitted] = useState(false);
+
   const router = useRouter();
 
   const handleGithubAuth = async () => {
-    setIsLoading(true);
+    setIsConnecting(true);
 
     const baseUrl =
       process.env.NODE_ENV === "production"
@@ -26,7 +32,30 @@ export default function Register() {
     } catch (error) {
       console.error("Authentication error:", error);
     } finally {
-      setIsLoading(false);
+      setIsConnecting(false);
+    }
+  };
+
+  const handleSubmitDetails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    
+    try {
+      const res = await saveDetails({
+        gitusername: githubUsername,
+        gitrepo: githubRepo
+      });
+
+      if(res.success){
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setIsDetailsSubmitted(true);
+        setGithubUsername("");
+        setGithubRepo("");
+      }
+    } catch (error) {
+      console.error('Error saving details:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -53,12 +82,58 @@ export default function Register() {
           </p>
         </div>
 
+        <form onSubmit={handleSubmitDetails} className="mt-8 space-y-4">
+          <div>
+            <label htmlFor="username" className="text-sm text-white/80">
+              Your github username
+            </label>
+            <input
+              id="username"
+              type="text"
+              required
+              value={githubUsername}
+              onChange={(e) => setGithubUsername(e.target.value)}
+              className="w-full px-3 py-2 mt-2 border border-white/20 rounded-md bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/20"
+              placeholder="Enter your GitHub username"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="repo" className="text-sm text-white/80">
+              Your blog repo name
+            </label>
+            <input
+              id="repo"
+              type="text"
+              required
+              value={githubRepo}
+              onChange={(e) => setGithubRepo(e.target.value)}
+              className="w-full px-3 py-2 mt-2 border border-white/20 rounded-md bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/20"
+              placeholder="Enter your blog repository name"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="w-full mt-2 px-4 py-2 text-white border border-transparent rounded-md bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+          >
+            {isSaving ? "Saving..." : "Save Details"}
+          </button>
+        </form>
+
+        <div className="relative flex items-center gap-4 py-2">
+          <div className="flex-grow border-t border-white/20"></div>
+          <span className="text-sm text-white/60">then click</span>
+          <div className="flex-grow border-t border-white/20"></div>
+        </div>
+
         <button
           onClick={handleGithubAuth}
-          disabled={isLoading}
+          disabled={!isDetailsSubmitted || isConnecting}
           className="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-white dark:text-black dark:hover:bg-gray-200"
         >
-          {isLoading ? (
+          {isConnecting ? (
             <span>Connecting...</span>
           ) : (
             <>
