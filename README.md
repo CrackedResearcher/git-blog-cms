@@ -4,9 +4,11 @@ A tool built for devs who want to blog directly from GitHub.
 
 **Why pay for CMS tools when GitHub can handle it all—_for free_?**
 
-That's where **Git-Blogger** comes in.
+As ChatGPT would say:
 
-Git-Blogger is a full-stack blog framework that lets you create, host, and publish your blog without lifting a finger. No manual deployments. No extra hassle.
+That's where **Git-Blogger** comes in! Haha!
+
+Git-Blogger is a full stack blog framework that lets you create, host, and publish your blog without lifting a finger. No manual deployments. No extra hassle.
 
 ---
 
@@ -19,10 +21,14 @@ Git-Blogger is a full-stack blog framework that lets you create, host, and publi
 ### 🚀 How to Set Up Your Blog
 
 1. **Clone this repo** — you'll get a blog template you can tweak as you like. [Clone this repo](https://github.com/CrackedResearcher/sleek-blog-template)
-2. **Run Git-Blogger** at [git-blogger.vercel.app](https://git-blogger.vercel.app).
-   - It'll ask for your GitHub username, the new blog repo name, and GitHub access.
-3. **Configure it** — just follow the prompts.
-4. **Done!** You're ready to blog.
+2. **Customize your blog** — make any changes you want to the cloned template.
+3. **Important:** **Do NOT modify** the `blog-data.ts` file — it's crucial for Git-Blogger to work properly.
+4. **Push the cloned repo** to your GitHub account.
+5. **Run Git-Blogger** at [git-blogger.vercel.app](https://git-blogger.vercel.app).
+   - It’ll ask for your GitHub username, the new blog repo name, and permission to access your GitHub account.
+6. **Configure it** — follow the on-screen instructions.
+7. **Done!** Your blog is ready to go.
+
 
 ### 📖 Publishing a Blog Post
 
@@ -51,5 +57,9 @@ Now, every time Git-Blogger pushes new changes, Vercel will auto-deploy your blo
 
 ---
 
-If you have any feature requests in mind, feel free to create an issue. 
+💡 Got Feature Requests?
+
+If you have any feature requests in mind, feel free to create an issue.
+
+
 
