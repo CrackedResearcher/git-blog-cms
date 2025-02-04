@@ -7,7 +7,7 @@ import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { createBlogPost } from "./actions";
-import { toast, Toaster } from "react-hot-toast";
+import { toast, Toaster } from "sonner";
 
 const EditorComponent = dynamic(
   () => import("../../components/EditorComponent"),
@@ -170,7 +170,7 @@ export default function MyEditor() {
 
       <Suspense fallback={<div>Loading editor...</div>}>
         <Editor />
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster richColors />
       </Suspense>
     </>
   );
