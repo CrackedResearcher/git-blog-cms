@@ -48,6 +48,7 @@ const Editor = () => {
       } else {
         localStorage.removeItem("blog-draft-save");
         toast.success("Blog post published successfully!");
+        setContent("");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
