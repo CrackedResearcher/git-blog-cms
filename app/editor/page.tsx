@@ -49,17 +49,13 @@ const Editor = () => {
         localStorage.removeItem("blog-draft-save");
         toast.success("Blog post published successfully!");
         setContent("");
+        router.push("/new");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
       toast.error("Failed to publish blog post");
     } finally {
       setIsPublishing(false);
-    }
-
-    if (localStorage.getItem("blog-draft-save")) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      router.push("/new");
     }
   };
 
