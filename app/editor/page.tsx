@@ -7,7 +7,7 @@ import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { createBlogPost } from "./actions";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 
 const EditorComponent = dynamic(
   () => import("../../components/EditorComponent"),
@@ -25,17 +25,13 @@ const Editor = () => {
   const [isPublishing, setIsPublishing] = useState(false);
 
 
-  const handleSaveDraft = async () => {
-    const toastId = toast.loading("Saving draft...");
+  const handleSaveDraft = () => {
     try {
       localStorage.setItem("blog-draft-save", content);
-      toast.success("Draft saved successfully", {
-        id: toastId,
-      });
+      new Promise(resolve => setTimeout(resolve, 100)); 
+      toast.success("Draft saved successfully");
     } catch (error) {
-      toast.error("Failed to save draft", {
-        id: toastId,
-      });
+      toast.error("Failed to save draft");
     }
   };
 
@@ -64,36 +60,28 @@ const Editor = () => {
   // };
 
   const handlePublishToGithub = async () => {
-    const toastId = toast.loading("Publishing blog post...");
     setIsPublishing(true);
     try {
       const result = await createBlogPost(title, content, description);
 
       if (result?.redirect) {
-        toast.success("Blog post published successfully!", {
-          id: toastId,
-        });
-        // Small delay to ensure toast is visible
-        await new Promise(resolve => setTimeout(resolve, 800));
+        toast.success("Blog post published successfully!");
+        await new Promise(resolve => setTimeout(resolve, 1000));
         router.push(result.redirect);
       } else {
         localStorage.removeItem("blog-draft-save");
-        toast.success("Blog post published successfully!", {
-          id: toastId,
-        });
+        toast.success("Blog post published successfully!");
         setContent("");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
-      toast.error("Failed to publish blog post", {
-        id: toastId,
-      });
+      toast.error("Failed to publish blog post");
     } finally {
       setIsPublishing(false);
     }
     
     if(localStorage.getItem("blog-draft-save")){
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       router.push("/new");
     }
   };
@@ -179,8 +167,10 @@ const Editor = () => {
 export default function MyEditor() {
   return (
     <>
+
       <Suspense fallback={<div>Loading editor...</div>}>
         <Editor />
+        <Toaster position="top-center" reverseOrder={false} />
       </Suspense>
     </>
   );
