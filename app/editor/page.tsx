@@ -24,39 +24,76 @@ const Editor = () => {
   const description = searchParams.get("description") || "";
   const [isPublishing, setIsPublishing] = useState(false);
 
+
   const handleSaveDraft = async () => {
+    const toastId = toast.loading("Saving draft...");
     try {
       localStorage.setItem("blog-draft-save", content);
-      toast.promise(Promise.resolve(), {
-        loading: "Saving draft...",
-        success: "Draft saved successfully",
-        error: "Could not save draft. Retry..",
+      toast.success("Draft saved successfully", {
+        id: toastId,
       });
     } catch (error) {
-      toast.error("Failed to save draft");
+      toast.error("Failed to save draft", {
+        id: toastId,
+      });
     }
   };
 
+  // const handlePublishToGithub = async () => {
+  //   setIsPublishing(true);
+  //   try {
+  //     const result = await createBlogPost(title, content, description);
+  //     // toast.success("Blog post published successfully!");
+
+  //     if (result?.redirect) {
+  //       router.push(result.redirect);
+  //     } else {
+  //       localStorage.removeItem("blog-draft-save");
+  //       toast.success("Blog post published successfully!");
+  //       setContent("");
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to publish:", error);
+  //     toast.error("Failed to publish blog post");
+  //   } finally {
+  //     setIsPublishing(false);
+  //   }
+  //   if(localStorage.getItem("blog-draft-save")){
+  //     router.push("/new");
+  //   }
+  // };
+
   const handlePublishToGithub = async () => {
+    const toastId = toast.loading("Publishing blog post...");
     setIsPublishing(true);
     try {
       const result = await createBlogPost(title, content, description);
-      // toast.success("Blog post published successfully!");
 
       if (result?.redirect) {
+        toast.success("Blog post published successfully!", {
+          id: toastId,
+        });
+        // Small delay to ensure toast is visible
+        await new Promise(resolve => setTimeout(resolve, 800));
         router.push(result.redirect);
       } else {
         localStorage.removeItem("blog-draft-save");
-        toast.success("Blog post published successfully!");
+        toast.success("Blog post published successfully!", {
+          id: toastId,
+        });
         setContent("");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
-      toast.error("Failed to publish blog post");
+      toast.error("Failed to publish blog post", {
+        id: toastId,
+      });
     } finally {
       setIsPublishing(false);
     }
+    
     if(localStorage.getItem("blog-draft-save")){
+      await new Promise(resolve => setTimeout(resolve, 800));
       router.push("/new");
     }
   };
