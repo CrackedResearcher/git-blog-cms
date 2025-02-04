@@ -8,6 +8,7 @@ import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { createBlogPost } from "./actions";
 import { toast, Toaster } from "sonner";
+import PublishConfirmation from "./publishComfirmation";
 
 const EditorComponent = dynamic(
   () => import("../../components/EditorComponent"),
@@ -19,45 +20,21 @@ const EditorComponent = dynamic(
 const Editor = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [content, setContent] = useState<string>(""); 
+  const [content, setContent] = useState<string>("");
   const title = searchParams.get("title") || "";
   const description = searchParams.get("description") || "";
   const [isPublishing, setIsPublishing] = useState(false);
-
+  const [showPublishDialog, setShowPublishDialog] = useState(false);
 
   const handleSaveDraft = () => {
     try {
       localStorage.setItem("blog-draft-save", content);
-      new Promise(resolve => setTimeout(resolve, 100)); 
+      new Promise((resolve) => setTimeout(resolve, 100));
       toast.success("Draft saved successfully");
     } catch (error) {
       toast.error("Failed to save draft");
     }
   };
-
-  // const handlePublishToGithub = async () => {
-  //   setIsPublishing(true);
-  //   try {
-  //     const result = await createBlogPost(title, content, description);
-  //     // toast.success("Blog post published successfully!");
-
-  //     if (result?.redirect) {
-  //       router.push(result.redirect);
-  //     } else {
-  //       localStorage.removeItem("blog-draft-save");
-  //       toast.success("Blog post published successfully!");
-  //       setContent("");
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to publish:", error);
-  //     toast.error("Failed to publish blog post");
-  //   } finally {
-  //     setIsPublishing(false);
-  //   }
-  //   if(localStorage.getItem("blog-draft-save")){
-  //     router.push("/new");
-  //   }
-  // };
 
   const handlePublishToGithub = async () => {
     setIsPublishing(true);
@@ -66,7 +43,7 @@ const Editor = () => {
 
       if (result?.redirect) {
         toast.success("Blog post published successfully!");
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         router.push(result.redirect);
       } else {
         localStorage.removeItem("blog-draft-save");
@@ -79,11 +56,15 @@ const Editor = () => {
     } finally {
       setIsPublishing(false);
     }
-    
-    if(localStorage.getItem("blog-draft-save")){
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (localStorage.getItem("blog-draft-save")) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       router.push("/new");
     }
+  };
+
+  const handlePublishClick = () => {
+    setShowPublishDialog(true);
   };
 
   const debouncedSetContent = useCallback(
@@ -136,11 +117,16 @@ const Editor = () => {
         <div className="border-b dark:border-gray-800 mb-8 font-sans text-gray-300" />
 
         <div className="prose prose-gray dark:prose-invert max-w-none p-0">
-        <div className="prose prose-gray dark:prose-invert max-w-none p-0">
-  <Suspense fallback={<div className="h-[500px]">Loading editor...</div>}>
-    <EditorComponent markdown={content || ""} onChange={debouncedSetContent} />
-  </Suspense>
-</div>
+          <div className="prose prose-gray dark:prose-invert max-w-none p-0">
+            <Suspense
+              fallback={<div className="h-[500px]">Loading editor...</div>}
+            >
+              <EditorComponent
+                markdown={content || ""}
+                onChange={debouncedSetContent}
+              />
+            </Suspense>
+          </div>
         </div>
 
         <div className="fixed bottom-6 right-6 flex gap-3 font-sans">
@@ -152,13 +138,18 @@ const Editor = () => {
           </button>
 
           <Button
-            onClick={handlePublishToGithub}
+            onClick={handlePublishClick}
             disabled={isPublishing}
             className="px-4 py-1.5 bg-white text-black rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-colors"
           >
             {isPublishing ? "Publishing..." : "Publish Now"}
           </Button>
         </div>
+        <PublishConfirmation
+          open={showPublishDialog}
+          onOpenChange={setShowPublishDialog}
+          onConfirm={handlePublishToGithub}
+        />
       </main>
     </>
   );
@@ -167,10 +158,9 @@ const Editor = () => {
 export default function MyEditor() {
   return (
     <>
-
       <Suspense fallback={<div>Loading editor...</div>}>
         <Editor />
-        <Toaster richColors />
+        <Toaster richColors position="bottom-left" />
       </Suspense>
     </>
   );
