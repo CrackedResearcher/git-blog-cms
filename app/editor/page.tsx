@@ -7,7 +7,7 @@ import "@mdxeditor/editor/style.css";
 import { debounce } from "lodash";
 import { Button } from "@/components/ui/button";
 import { createBlogPost } from "./actions";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 const EditorComponent = dynamic(
   () => import("../../components/EditorComponent"),
@@ -19,7 +19,7 @@ const EditorComponent = dynamic(
 const Editor = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<string>(""); 
   const title = searchParams.get("title") || "";
   const description = searchParams.get("description") || "";
   const [isPublishing, setIsPublishing] = useState(false);
@@ -41,19 +41,21 @@ const Editor = () => {
     setIsPublishing(true);
     try {
       const result = await createBlogPost(title, content, description);
-      toast.success("Blog post published successfully!");
+      // toast.success("Blog post published successfully!");
 
       if (result?.redirect) {
         router.push(result.redirect);
       } else {
         localStorage.removeItem("blog-draft-save");
-        router.push("/new");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
       toast.error("Failed to publish blog post");
     } finally {
       setIsPublishing(false);
+    }
+    if(localStorage.getItem("blog-draft-save")){
+      router.push("/new");
     }
   };
 
@@ -77,7 +79,7 @@ const Editor = () => {
   useEffect(() => {
     const savedDraft = localStorage.getItem("blog-draft-save");
     if (savedDraft) {
-      setContent(savedDraft);
+      setContent(savedDraft || "");
       setTimeout(() => {
         toast.success("Draft loaded successfully", {
           duration: 3000,
@@ -107,7 +109,11 @@ const Editor = () => {
         <div className="border-b dark:border-gray-800 mb-8 font-sans text-gray-300" />
 
         <div className="prose prose-gray dark:prose-invert max-w-none p-0">
-          <EditorComponent markdown={content} onChange={debouncedSetContent} />
+        <div className="prose prose-gray dark:prose-invert max-w-none p-0">
+  <Suspense fallback={<div className="h-[500px]">Loading editor...</div>}>
+    <EditorComponent markdown={content || ""} onChange={debouncedSetContent} />
+  </Suspense>
+</div>
         </div>
 
         <div className="fixed bottom-6 right-6 flex gap-3 font-sans">
@@ -134,7 +140,7 @@ const Editor = () => {
 export default function MyEditor() {
   return (
     <>
-      <Suspense>
+      <Suspense fallback={<div>Loading editor...</div>}>
         <Editor />
       </Suspense>
     </>
