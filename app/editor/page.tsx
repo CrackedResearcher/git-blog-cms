@@ -47,6 +47,7 @@ const Editor = () => {
         router.push(result.redirect);
       } else {
         localStorage.removeItem("blog-draft-save");
+        toast.success("Blog post published successfully!");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
