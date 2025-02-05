@@ -69,10 +69,15 @@ export const createBlogPost = async (
     const title = folderName.split('-').join(' ');
     const data = await dataResponse.json();
     const currentContent = Buffer.from(data.content, 'base64').toString();
+
+    const sanitizeText = (text: string) => {
+      const sanitizedText = text.replace(/"/g, "'");
+      return sanitizedText.replace(/\\/g, "\\\\");
+    };
     
     const newBlogEntry = {
       title,
-      description,
+      description: sanitizeText(description),
       link: `/blog/${folderName}`,
       uid: `blog-${Date.now()}`,
     };

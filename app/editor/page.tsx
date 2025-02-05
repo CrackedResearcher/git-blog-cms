@@ -170,7 +170,12 @@ export default function MyEditor() {
     <>
       <Suspense fallback={<div>Loading editor...</div>}>
         <Editor />
-        <Toaster richColors position="bottom-left" />
+        <Toaster richColors position="bottom-left" toastOptions={{
+          style: {
+            maxWidth: '320px',
+            minWidth: '200px'
+          }
+        }} />
       </Suspense>
     </>
   );
