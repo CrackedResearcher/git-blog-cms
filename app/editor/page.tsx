@@ -42,14 +42,28 @@ const Editor = () => {
       const result = await createBlogPost(title, content, description);
 
       if (result?.redirect) {
-        toast.success("Blog post published successfully!");
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        toast.error(result.error || "Authentication required");
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         router.push(result.redirect);
+      } else if (result.success) {
+        await new Promise<void>((resolve) => {
+          toast.promise(
+            new Promise((toastResolve) => setTimeout(toastResolve, 1500)),
+            {
+              loading: 'Publishing your blog post...',
+              success: () => {
+                localStorage.removeItem("blog-draft-save");
+                setContent("");
+                resolve(); 
+                setTimeout(() => router.push("/new"), 300);
+                return 'Blog post published successfully!';
+              },
+              error: 'Failed to publish blog post'
+            }
+          );
+        });
       } else {
-        localStorage.removeItem("blog-draft-save");
-        toast.success("Blog post published successfully!");
-        setContent("");
-        router.push("/new");
+        toast.error(result.error || "Failed to publish blog post");
       }
     } catch (error) {
       console.error("Failed to publish:", error);
